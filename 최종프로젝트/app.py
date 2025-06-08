@@ -425,4 +425,21 @@ except Exception:
     # streamlit_extras 없으면 sidebar로 fallback
     with st.sidebar:
         st.markdown("#### 🗨️ AI에게 자유 질문 (Fallback)")
-        free_q = st.text_input("궁금한
+        free_q = st.text_input("궁금한 점을 입력하세요", key="free_q_fallback")
+        if st.button("질문하기", key="free_q_btn_fallback"):
+            if free_q:
+                response = client.chat.completions.create(
+                    model="gpt-4o",
+                    messages=[{"role": "user", "content": free_q}],
+                    temperature=0.5
+                )
+                answer = response.choices[0].message.content
+                st.session_state.chat_history.append((free_q, answer))
+                st.write(f"**Q:** {free_q}")
+                st.write(f"**A:** {answer}")
+        if st.session_state.chat_history:
+            st.markdown("---")
+            st.markdown("##### 최근 질문/답변")
+            for q, a in st.session_state.chat_history[-3:][::-1]:
+                st.markdown(f"**Q:** {q}")
+                st.markdown(f"**A:** {a}")
