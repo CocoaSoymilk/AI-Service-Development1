@@ -68,19 +68,23 @@ def extract_text(pdf_file):
     doc.close()
     return '\n\n'.join(texts)
 
-def generate_questions(full_text, client, num_questions=15, difficulty="중"):
+def generate_questions(full_text, client, num_questions=15, difficulty="중", author_info=None, target_level=None):
     difficulty_prompts = {
-        "하": "기초적이고 단순한 사실 확인 위주의",
-        "중": "이해력과 적용력을 요구하는 중간 수준의",
-        "상": "심화된 분석력과 종합적 사고를 요구하는 고난도"
+        "하": "기초적이고 단순한 사실 확인이 아니라, 반드시 학습자가 이해해야 할 핵심 내용을 묻는",
+        "중": "이해력과 적용력을 요구하며, 학습자의 생각을 이끌어내는",
+        "상": "분석력과 종합적 사고, 그리고 비판적 관점을 요구하는"
     }
     prompt = (
-        f"아래 내용을 바탕으로 {difficulty_prompts[difficulty]} 한국어 주관식 예상 시험문제 {num_questions}개를 만들어줘.\n"
-        f"난이도: {difficulty}\n"
-        "- 각각 번호를 붙여줘 (1. 2. 3. ... 형식)\n"
-        "- 답은 절대 쓰지 마.\n"
-        "- 문제만 작성해줘.\n\n"
-        f"내용:\n{full_text}"
+        f"너는 {'이 수업의 교수' if not author_info else author_info}이고, "
+        f"이 자료는 {target_level+'용' if target_level else '대상 불명'} 수업 자료다.\n"
+        f"자료의 핵심 개념, 반드시 알아야 할 내용만을 바탕으로 {difficulty_prompts[difficulty]} "
+        f"한국어 주관식 예상 시험문제 {num_questions}개를 만들어줘.\n"
+        f"- 너무 쉬운 문제, 단순 복사 문제, 상식적인 사실 문제는 내지 마라.\n"
+        f"- 학생의 사고력, 이해력, 적용력을 반드시 평가할 수 있어야 한다.\n"
+        f"- 각 문제에 번호를 붙여라 (1. 2. ...)\n"
+        f"- 답은 절대 쓰지 마라.\n"
+        f"- 문제만 작성해라.\n\n"
+        f"자료 내용:\n{full_text}"
     )
     response = client.chat.completions.create(
         model="gpt-4o",
