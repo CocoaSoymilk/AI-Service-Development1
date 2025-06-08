@@ -87,7 +87,7 @@ def generate_questions(full_text, client, num_questions=15, difficulty="중", au
         f"자료 내용:\n{full_text}"
     )
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7
     )
@@ -126,7 +126,7 @@ def evaluate_answer(question, user_answer, context, client, difficulty="중"):
         "- [필요시 추가]\n"
     )
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.5
     )
@@ -141,7 +141,7 @@ def get_hint(question, full_text, client):
         "문제를 풀 때 참고가 될만한 원문에서 핵심 키워드, 문장, 단서를 간략하게 요약해서 '힌트'로 알려줘. 단, 정답은 포함하지 마."
     )
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3
     )
